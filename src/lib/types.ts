@@ -14,21 +14,10 @@ export interface Medicine {
   updatedAt: string; // ISO Date string format
 }
 
-// Bill Item model
-export interface BillItem {
-  id?: string;
-  medicineId: string;
-  medicineName: string;
-  quantity: number;
-  pricePerUnit: number;
-  totalPrice: number;
-  billId?: string;
-}
-
 // Bill model
 export interface Bill {
   id: string;
-  items: BillItem[];
+  items: import("./store").BillItem[];
   totalAmount: number;
   customerName?: string;
   customerPhone?: string;

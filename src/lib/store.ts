@@ -1,8 +1,19 @@
 
 import { create } from "zustand";
 import { supabase } from "@/integrations/supabase/client";
-import { Medicine, Bill, BillItem, DbMedicine, DbBill, DbBillItem } from "./types";
+import { Medicine, Bill, DbMedicine, DbBill, DbBillItem } from "./types";
 import { toast } from "../hooks/use-toast";
+
+// Export the BillItem interface so it can be used in other files
+export interface BillItem {
+  id?: string;
+  medicineId: string;
+  medicineName: string;
+  quantity: number;
+  pricePerUnit: number;
+  totalPrice: number;
+  billId?: string;
+}
 
 // Helpers for data conversion
 const convertDbMedicineToMedicine = (dbMedicine: DbMedicine): Medicine => ({

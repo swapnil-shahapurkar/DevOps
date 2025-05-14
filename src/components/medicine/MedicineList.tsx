@@ -61,7 +61,8 @@ export const MedicineList = () => {
   const filteredMedicines = medicines.filter(med => 
     med.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (med.manufacturer && med.manufacturer.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (med.category && med.category.toLowerCase().includes(searchTerm.toLowerCase()))
+    (med.category && med.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (med.shelfNumber && med.shelfNumber.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -135,6 +136,17 @@ export const MedicineList = () => {
                   </span>
                 </div>
               </div>
+              
+              {medicine.shelfNumber && (
+                <div className="mt-3 bg-medPurple/10 px-3 py-2 rounded-md border border-medPurple/20">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Shelf Location:</span>
+                    <span className="text-sm bg-medPurple/20 px-2 py-0.5 rounded font-mono">
+                      {medicine.shelfNumber}
+                    </span>
+                  </div>
+                </div>
+              )}
               
               {medicine.description && (
                 <div className="mt-3 border-t border-white/10 pt-3">

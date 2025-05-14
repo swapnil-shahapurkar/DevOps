@@ -9,6 +9,7 @@ export interface Medicine {
   expiryDate: string; // ISO Date string format
   category?: string;
   description?: string;
+  shelfNumber?: string; // New field for shelf location
   createdAt: string; // ISO Date string format
   updatedAt: string; // ISO Date string format
 }

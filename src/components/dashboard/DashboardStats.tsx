@@ -4,6 +4,7 @@ import { useStore } from "../../lib/store";
 import { Card } from "../ui/card";
 import { gsap } from "gsap";
 import { Medicine } from "../../lib/types";
+import { Pill, Archive, AlertCircle, Calendar } from "lucide-react";
 
 export const DashboardStats = () => {
   const { medicines } = useStore();
@@ -53,23 +54,51 @@ export const DashboardStats = () => {
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="stat-card p-6 glass-card">
-          <h3 className="text-muted-foreground text-sm font-medium">Total Medicines</h3>
-          <p className="text-3xl font-bold mt-2">{medicines.length}</p>
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-full bg-medPurple-light/20">
+              <Pill className="h-6 w-6 text-medPurple" />
+            </div>
+            <div>
+              <h3 className="text-muted-foreground text-sm font-medium">Total Medicines</h3>
+              <p className="text-3xl font-bold mt-1">{medicines.length}</p>
+            </div>
+          </div>
         </Card>
         
         <Card className="stat-card p-6 glass-card">
-          <h3 className="text-muted-foreground text-sm font-medium">Inventory Value</h3>
-          <p className="text-3xl font-bold mt-2">${totalInventoryValue.toFixed(2)}</p>
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-full bg-medPurple/20">
+              <Archive className="h-6 w-6 text-medPurple" />
+            </div>
+            <div>
+              <h3 className="text-muted-foreground text-sm font-medium">Inventory Value</h3>
+              <p className="text-3xl font-bold mt-1">${totalInventoryValue.toFixed(2)}</p>
+            </div>
+          </div>
         </Card>
         
         <Card className="stat-card p-6 glass-card">
-          <h3 className="text-muted-foreground text-sm font-medium">Low Stock Items</h3>
-          <p className="text-3xl font-bold mt-2">{lowStockCount}</p>
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-full bg-destructive/20">
+              <AlertCircle className="h-6 w-6 text-destructive" />
+            </div>
+            <div>
+              <h3 className="text-muted-foreground text-sm font-medium">Low Stock Items</h3>
+              <p className="text-3xl font-bold mt-1">{lowStockCount}</p>
+            </div>
+          </div>
         </Card>
         
         <Card className="stat-card p-6 glass-card">
-          <h3 className="text-muted-foreground text-sm font-medium">Expiring Soon</h3>
-          <p className="text-3xl font-bold mt-2">{expiringSoonCount}</p>
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-full bg-medPurple-dark/20">
+              <Calendar className="h-6 w-6 text-medPurple-dark" />
+            </div>
+            <div>
+              <h3 className="text-muted-foreground text-sm font-medium">Expiring Soon</h3>
+              <p className="text-3xl font-bold mt-1">{expiringSoonCount}</p>
+            </div>
+          </div>
         </Card>
       </div>
       

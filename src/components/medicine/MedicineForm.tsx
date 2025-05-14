@@ -26,6 +26,7 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
     expiryDate: string;
     category: string;
     description: string;
+    shelfNumber: string;
   }>({
     name: "",
     manufacturer: "",
@@ -33,7 +34,8 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
     stock: "",
     expiryDate: new Date().toISOString().split("T")[0],
     category: "",
-    description: ""
+    description: "",
+    shelfNumber: ""
   });
 
   // Load medicine data if editing
@@ -48,7 +50,8 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
           stock: medicine.stock.toString(),
           expiryDate: new Date(medicine.expiryDate).toISOString().split("T")[0],
           category: medicine.category || "",
-          description: medicine.description || ""
+          description: medicine.description || "",
+          shelfNumber: medicine.shelfNumber || ""
         });
       }
     }
@@ -97,7 +100,8 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
         stock,
         expiryDate: new Date(formData.expiryDate).toISOString(),
         category: formData.category,
-        description: formData.description
+        description: formData.description,
+        shelfNumber: formData.shelfNumber
       };
       
       if (medicineId) {
@@ -117,7 +121,8 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
           stock: "",
           expiryDate: new Date().toISOString().split("T")[0],
           category: "",
-          description: ""
+          description: "",
+          shelfNumber: ""
         });
       }
       
@@ -218,6 +223,18 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
               placeholder="Enter category"
             />
           </div>
+        </div>
+        
+        <div className="form-field">
+          <label className="block mb-1 text-sm font-medium">
+            Shelf Number
+          </label>
+          <Input
+            name="shelfNumber"
+            value={formData.shelfNumber}
+            onChange={handleChange}
+            placeholder="Enter shelf location (e.g. A1, B3)"
+          />
         </div>
         
         <div className="form-field">

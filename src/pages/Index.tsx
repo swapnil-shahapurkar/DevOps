@@ -1,11 +1,13 @@
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { gsap } from "gsap";
 import { Button } from "../components/ui/button";
+import { Pill, Capsule, Flask } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     // Animate welcome screen elements
@@ -26,10 +28,46 @@ const Index = () => {
       { opacity: 1, y: 0, stagger: 0.2, duration: 0.8, ease: "back.out(1.7)" },
       "-=0.5"
     );
+
+    // Animate floating medicine icons
+    if (containerRef.current) {
+      const icons = containerRef.current.querySelectorAll('.floating-icon');
+      
+      icons.forEach((icon, index) => {
+        // Random starting position
+        gsap.set(icon, {
+          x: Math.random() * window.innerWidth * 0.8 - 100,
+          y: Math.random() * window.innerHeight * 0.7 - 100,
+          rotation: Math.random() * 360,
+          scale: 0.5 + Math.random() * 0.5
+        });
+        
+        // Create floating animation
+        gsap.to(icon, {
+          duration: 10 + index * 2,
+          x: `+=${Math.random() * 200 - 100}`,
+          y: `+=${Math.random() * 200 - 100}`,
+          rotation: Math.random() * 360,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        });
+      });
+    }
   }, []);
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" ref={containerRef}>
+      {/* Floating 3D medicine elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <Pill className="floating-icon text-medPurple-light absolute opacity-30 w-16 h-16" />
+        <Capsule className="floating-icon text-medPurple absolute opacity-30 w-20 h-20" />
+        <Flask className="floating-icon text-medPurple-dark absolute opacity-30 w-24 h-24" />
+        <Pill className="floating-icon text-medPurple-light absolute opacity-30 w-12 h-12" />
+        <Capsule className="floating-icon text-medPurple-dark absolute opacity-30 w-16 h-16" />
+        <Flask className="floating-icon text-medPurple absolute opacity-30 w-10 h-10" />
+      </div>
+      
       {/* Hero section */}
       <div 
         className="flex-1 flex flex-col items-center justify-center p-8 text-center"
@@ -49,21 +87,21 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               onClick={() => navigate('/dashboard')}
-              className="welcome-button px-8 py-6 text-lg bg-medPurple hover:bg-medPurple-dark"
+              className="welcome-button px-8 py-6 text-lg bg-medPurple hover:bg-medPurple-dark text-white"
             >
               Dashboard
             </Button>
             
             <Button 
               onClick={() => navigate('/inventory')}
-              className="welcome-button px-8 py-6 text-lg bg-background hover:bg-white/10 border border-white/20"
+              className="welcome-button px-8 py-6 text-lg bg-background hover:bg-white/10 border border-white/20 text-white"
             >
               Manage Inventory
             </Button>
             
             <Button 
               onClick={() => navigate('/billing')}
-              className="welcome-button px-8 py-6 text-lg bg-background hover:bg-white/10 border border-white/20"
+              className="welcome-button px-8 py-6 text-lg bg-background hover:bg-white/10 border border-white/20 text-white"
             >
               Billing System
             </Button>

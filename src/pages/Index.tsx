@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { gsap } from "gsap";
 import { Button } from "../components/ui/button";
-import { Pill, Vial, Tablet } from "lucide-react";
+import { Pill, Thermometer, Stethoscope } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -61,11 +61,11 @@ const Index = () => {
       {/* Floating 3D medicine elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <Pill className="floating-icon text-medPurple-light absolute opacity-30 w-16 h-16" />
-        <Vial className="floating-icon text-medPurple absolute opacity-30 w-20 h-20" />
-        <Tablet className="floating-icon text-medPurple-dark absolute opacity-30 w-24 h-24" />
+        <Thermometer className="floating-icon text-medPurple absolute opacity-30 w-20 h-20" />
+        <Stethoscope className="floating-icon text-medPurple-dark absolute opacity-30 w-24 h-24" />
         <Pill className="floating-icon text-medPurple-light absolute opacity-30 w-12 h-12" />
-        <Vial className="floating-icon text-medPurple-dark absolute opacity-30 w-16 h-16" />
-        <Tablet className="floating-icon text-medPurple absolute opacity-30 w-10 h-10" />
+        <Thermometer className="floating-icon text-medPurple-dark absolute opacity-30 w-16 h-16" />
+        <Stethoscope className="floating-icon text-medPurple absolute opacity-30 w-10 h-10" />
       </div>
       
       {/* Hero section */}

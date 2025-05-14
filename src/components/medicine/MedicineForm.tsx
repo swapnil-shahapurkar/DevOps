@@ -1,13 +1,13 @@
 
 import { useState, useEffect } from "react";
 import { useStore } from "../../lib/store";
-import { Medicine } from "../../lib/types";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { useToast } from "../../hooks/use-toast";
 import { gsap } from "gsap";
+import { Loader2 } from "lucide-react";
 
 interface MedicineFormProps {
   medicineId?: string;
@@ -17,6 +17,7 @@ interface MedicineFormProps {
 export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
   const { toast } = useToast();
   const { addMedicine, updateMedicine, getMedicine } = useStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState<{
     name: string;
@@ -71,10 +72,12 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
+      setIsSubmitting(true);
+      
       // Form validation
       if (!formData.name.trim()) {
         toast({ title: "Error", description: "Medicine name is required", variant: "destructive" });
@@ -105,10 +108,10 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
       };
       
       if (medicineId) {
-        updateMedicine(medicineId, medicineData);
+        await updateMedicine(medicineId, medicineData);
         toast({ title: "Success", description: "Medicine updated successfully" });
       } else {
-        addMedicine(medicineData);
+        await addMedicine(medicineData);
         toast({ title: "Success", description: "Medicine added successfully" });
       }
       
@@ -128,12 +131,14 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
       
       if (onComplete) onComplete();
     } catch (error) {
+      console.error(error);
       toast({ 
         title: "Error", 
         description: "An error occurred while saving medicine",
         variant: "destructive"
       });
-      console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -150,6 +155,7 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
             onChange={handleChange}
             placeholder="Enter medicine name"
             required
+            disabled={isSubmitting}
           />
         </div>
         
@@ -162,6 +168,7 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
             value={formData.manufacturer}
             onChange={handleChange}
             placeholder="Enter manufacturer name"
+            disabled={isSubmitting}
           />
         </div>
         
@@ -179,6 +186,7 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
               step="0.01"
               min="0"
               required
+              disabled={isSubmitting}
             />
           </div>
           
@@ -194,6 +202,7 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
               placeholder="0"
               min="0"
               required
+              disabled={isSubmitting}
             />
           </div>
         </div>
@@ -209,6 +218,7 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
               value={formData.expiryDate}
               onChange={handleChange}
               required
+              disabled={isSubmitting}
             />
           </div>
           
@@ -221,6 +231,7 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
               value={formData.category}
               onChange={handleChange}
               placeholder="Enter category"
+              disabled={isSubmitting}
             />
           </div>
         </div>
@@ -234,6 +245,7 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
             value={formData.shelfNumber}
             onChange={handleChange}
             placeholder="Enter shelf location (e.g. A1, B3)"
+            disabled={isSubmitting}
           />
         </div>
         
@@ -247,12 +259,24 @@ export const MedicineForm = ({ medicineId, onComplete }: MedicineFormProps) => {
             onChange={handleChange}
             placeholder="Enter description"
             rows={3}
+            disabled={isSubmitting}
           />
         </div>
         
         <div className="form-field">
-          <Button type="submit" className="bg-medPurple hover:bg-medPurple-dark text-white w-full">
-            {medicineId ? "Update Medicine" : "Add Medicine"}
+          <Button 
+            type="submit" 
+            className="bg-medPurple hover:bg-medPurple-dark text-white w-full"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {medicineId ? "Updating..." : "Adding..."}
+              </>
+            ) : (
+              medicineId ? "Update Medicine" : "Add Medicine"
+            )}
           </Button>
         </div>
       </form>

@@ -29,7 +29,7 @@ const Inventory = () => {
         
         <Button 
           onClick={() => setIsAddDialogOpen(true)}
-          className="bg-medPurple hover:bg-medPurple-dark text-white"
+          className="bg-medPurple hover:bg-medPurple-dark text-white btn-pulse"
         >
           <Plus className="h-4 w-4 mr-2" /> Add Medicine
         </Button>

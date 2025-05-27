@@ -127,6 +127,7 @@ export const MedicineList = () => {
                       size="icon" 
                       onClick={() => handleEdit(medicine.id)}
                       title="Edit medicine"
+                      className="btn-blink"
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>
@@ -135,6 +136,7 @@ export const MedicineList = () => {
                       size="icon" 
                       onClick={() => handleDelete(medicine.id)}
                       title="Delete medicine"
+                      className="btn-blink"
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>

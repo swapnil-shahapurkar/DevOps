@@ -10,6 +10,7 @@ import { BillItem } from "../../lib/store";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { ScrollArea } from "../ui/scroll-area";
 import { Trash2, Printer } from "lucide-react";
+import { Bill } from "../../lib/types";
 
 export const BillingForm = () => {
   const { toast } = useToast();
@@ -21,7 +22,7 @@ export const BillingForm = () => {
   const [customerPhone, setCustomerPhone] = useState("");
   const [discount, setDiscount] = useState(0);
   const [showBillPreview, setShowBillPreview] = useState(false);
-  const [generatedBill, setGeneratedBill] = useState<any>(null);
+  const [generatedBill, setGeneratedBill] = useState<Bill | null>(null);
   
   useEffect(() => {
     // Animate form fields on mount
@@ -120,7 +121,7 @@ export const BillingForm = () => {
     return calculateSubtotal() - (discount || 0);
   };
   
-  const handleGenerateBill = () => {
+  const handleGenerateBill = async () => {
     if (selectedMedicines.length === 0) {
       toast({ 
         title: "Error", 
@@ -131,12 +132,17 @@ export const BillingForm = () => {
     }
     
     try {
-      const bill = createBill(
+      const bill = await createBill(
         selectedMedicines, 
         customerName || "Customer", 
         customerPhone, 
         discount
       );
+      
+      // Verify bill has the required properties before setting state
+      if (!bill || !bill.items) {
+        throw new Error("Generated bill is missing required data");
+      }
       
       setGeneratedBill(bill);
       setShowBillPreview(true);
@@ -161,86 +167,110 @@ export const BillingForm = () => {
   };
   
   const handlePrintBill = () => {
-    if (!generatedBill) return;
+    if (!generatedBill || !generatedBill.items) {
+      toast({ 
+        title: "Error", 
+        description: "Bill data is incomplete or missing", 
+        variant: "destructive" 
+      });
+      return;
+    }
     
     const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
+    if (!printWindow) {
+      toast({ 
+        title: "Error", 
+        description: "Could not open print window", 
+        variant: "destructive" 
+      });
+      return;
+    }
     
-    const billDate = new Date(generatedBill.date).toLocaleDateString();
-    
-    const billContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Medical Bill</title>
-        <style>
-          body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-          .bill-header { text-align: center; margin-bottom: 20px; }
-          .bill-header h2 { margin: 0; }
-          .customer-info { margin-bottom: 20px; }
-          table { width: 100%; border-collapse: collapse; }
-          th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
-          .total-section { margin-top: 20px; text-align: right; }
-          .footer { margin-top: 40px; text-align: center; font-size: 12px; }
-        </style>
-      </head>
-      <body>
-        <div class="bill-header">
-          <h2>Med Vault Pharmacy</h2>
-          <p>123 Medical Street, Health City</p>
-          <p>Phone: (123) 456-7890</p>
-        </div>
-        
-        <div class="customer-info">
-          <p><strong>Bill ID:</strong> ${generatedBill.id}</p>
-          <p><strong>Date:</strong> ${billDate}</p>
-          <p><strong>Customer:</strong> ${generatedBill.customerName || 'Customer'}</p>
-          ${generatedBill.customerPhone ? `<p><strong>Phone:</strong> ${generatedBill.customerPhone}</p>` : ''}
-        </div>
-        
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Medicine</th>
-              <th>Quantity</th>
-              <th>Unit Price</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${generatedBill.items.map((item: any, index: number) => `
+    try {
+      const billDate = new Date(generatedBill.date).toLocaleDateString();
+      
+      const billContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Medical Bill</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+            .bill-header { text-align: center; margin-bottom: 20px; }
+            .bill-header h2 { margin: 0; }
+            .customer-info { margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+            .total-section { margin-top: 20px; text-align: right; }
+            .footer { margin-top: 40px; text-align: center; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="bill-header">
+            <h2>Med Vault Pharmacy</h2>
+            <p>123 Medical Street, Health City</p>
+            <p>Phone: (123) 456-7890</p>
+          </div>
+          
+          <div class="customer-info">
+            <p><strong>Bill ID:</strong> ${generatedBill.id}</p>
+            <p><strong>Date:</strong> ${billDate}</p>
+            <p><strong>Customer:</strong> ${generatedBill.customerName || 'Customer'}</p>
+            ${generatedBill.customerPhone ? `<p><strong>Phone:</strong> ${generatedBill.customerPhone}</p>` : ''}
+          </div>
+          
+          <table>
+            <thead>
               <tr>
-                <td>${index + 1}</td>
-                <td>${item.medicineName}</td>
-                <td>${item.quantity}</td>
-                <td>$${item.pricePerUnit.toFixed(2)}</td>
-                <td>$${item.totalPrice.toFixed(2)}</td>
+                <th>#</th>
+                <th>Medicine</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
-        
-        <div class="total-section">
-          <p><strong>Subtotal:</strong> $${generatedBill.totalAmount.toFixed(2)}</p>
-          ${generatedBill.discount ? `<p><strong>Discount:</strong> $${generatedBill.discount.toFixed(2)}</p>` : ''}
-          <h3>Total: $${generatedBill.finalAmount.toFixed(2)}</h3>
-        </div>
-        
-        <div class="footer">
-          <p>Thank you for your purchase!</p>
-        </div>
-      </body>
-      </html>
-    `;
-    
-    printWindow.document.open();
-    printWindow.document.write(billContent);
-    printWindow.document.close();
-    
-    setTimeout(() => {
-      printWindow.print();
-    }, 500);
+            </thead>
+            <tbody>
+              ${generatedBill.items.map((item: any, index: number) => `
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${item.medicineName}</td>
+                  <td>${item.quantity}</td>
+                  <td>$${item.pricePerUnit.toFixed(2)}</td>
+                  <td>$${item.totalPrice.toFixed(2)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          
+          <div class="total-section">
+            <p><strong>Subtotal:</strong> $${generatedBill.totalAmount.toFixed(2)}</p>
+            ${generatedBill.discount ? `<p><strong>Discount:</strong> $${generatedBill.discount.toFixed(2)}</p>` : ''}
+            <h3>Total: $${generatedBill.finalAmount.toFixed(2)}</h3>
+          </div>
+          
+          <div class="footer">
+            <p>Thank you for your purchase!</p>
+          </div>
+        </body>
+        </html>
+      `;
+      
+      printWindow.document.open();
+      printWindow.document.write(billContent);
+      printWindow.document.close();
+      
+      setTimeout(() => {
+        printWindow.print();
+      }, 500);
+    } catch (error) {
+      console.error('Error generating bill print view:', error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to generate bill print view", 
+        variant: "destructive" 
+      });
+      printWindow.close();
+    }
   };
   
   return (
@@ -412,7 +442,7 @@ export const BillingForm = () => {
             <DialogTitle>Bill Preview</DialogTitle>
           </DialogHeader>
           
-          {generatedBill && (
+          {generatedBill && generatedBill.items ? (
             <div className="space-y-4">
               <div>
                 <h3 className="text-xl font-bold mb-2">Med Vault Pharmacy</h3>
@@ -467,6 +497,10 @@ export const BillingForm = () => {
                   Print Bill
                 </Button>
               </div>
+            </div>
+          ) : (
+            <div className="py-4 text-center">
+              <p className="text-muted-foreground">Bill data is incomplete or missing</p>
             </div>
           )}
         </DialogContent>

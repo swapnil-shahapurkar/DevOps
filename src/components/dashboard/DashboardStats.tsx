@@ -95,7 +95,7 @@ export const DashboardStats = () => {
               <Calendar className="h-6 w-6 text-medPurple-dark" />
             </div>
             <div>
-              <h3 className="text-muted-foreground text-sm font-medium">Expiring Soon</h3>
+              <h3 className="text-muted-foreground text-sm font-medium">Expiring Soon...</h3>
               <p className="text-3xl font-bold mt-1">{expiringSoonCount}</p>
             </div>
           </div>

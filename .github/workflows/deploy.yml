@@ -15,8 +15,7 @@ jobs:
 
     - name: Print repository info
       run: |
-        echo "Repository: ${{ github.repository }}"
-        echo "Repository owner: ${{ github.repository_owner }}"
+        echo "Using repository: https://github.com/swapnil-shahapurkar/DevOps.git"
 
     - name: Setup SSH
       run: |
@@ -34,16 +33,10 @@ jobs:
           docker stop vite-app || true
           docker rm vite-app || true
 
-          # Setup GitHub SSH key for private repo access
-          mkdir -p ~/.ssh
-          echo "${{ secrets.GITHUB_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-          # Clone repo if not exists, otherwise pull latest
+          # Clone repo if not already cloned
           if [ ! -d ~/vite-deploy/.git ]; then
-            echo "Cloning repository..."
-            git clone git@github.com:${{ github.repository }} ~/vite-deploy
+            echo "Cloning from https://github.com/swapnil-shahapurkar/DevOps.git"
+            git clone https://github.com/swapnil-shahapurkar/DevOps.git ~/vite-deploy
           fi
 
           cd ~/vite-deploy

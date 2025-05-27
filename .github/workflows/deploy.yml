@@ -25,12 +25,12 @@ jobs:
         ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           set -e
 
-          # Clean Docker system
+          # Clean Docker environment
           docker stop vite-app || true
           docker rm vite-app || true
           docker volume prune -f
 
-          # Clone or pull latest repo
+          # Clone or update the repo (via SSH)
           if [ ! -d ~/vite-deploy ]; then
             git clone git@github.com:${{ github.repository }} ~/vite-deploy
           fi
@@ -38,7 +38,7 @@ jobs:
           cd ~/vite-deploy
           git pull origin main
 
-          # Rebuild and run container
+          # Build and run the container
           docker build -t vite-app .
           docker run -d -p 3000:4173 --name vite-app vite-app
         EOF

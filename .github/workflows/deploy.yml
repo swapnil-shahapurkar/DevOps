@@ -27,27 +27,31 @@ jobs:
     - name: Deploy via SSH
       run: |
         ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-          echo "Connected to EC2 at \$(hostname)"
+          echo "Connected to EC2 at $(hostname)"
           echo "Cleaning Docker system completely..."
 
           # Fully wipe Docker system including volumes
           docker system prune -a --volumes -f || true
 
+          echo "Stopping all running containers..."
+          docker stop $(docker ps -q) || true
+
+          echo "Removing all containers..."
+          docker rm $(docker ps -a -q) || true
+
           echo "Cloning from: https://github.com/swapnil-shahapurkar/DevOps.git"
 
-          # Clone repo if not exists
           if [ ! -d ~/vite-deploy/.git ]; then
             git clone https://github.com/swapnil-shahapurkar/DevOps.git ~/vite-deploy
           fi
 
           cd ~/vite-deploy
-          echo "Inside \$(pwd)"
+          echo "Inside $(pwd)"
           git pull origin main
 
           echo "Files in project directory:"
           ls -al
 
-          # Build and run container
           docker build -t vite-app .
           docker run -d -p 3000:4173 --name vite-app vite-app
         EOF

@@ -77,7 +77,7 @@ const Index = () => {
       >
         <div className="max-w-3xl mx-auto">
           <h1 className="welcome-title text-4xl md:text-6xl font-bold mb-6 text-gradient">
-            Med Vault
+            Med Vault Team 1
           </h1>
           
           <p className="welcome-subtitle text-xl md:text-2xl mb-12 text-white/80">

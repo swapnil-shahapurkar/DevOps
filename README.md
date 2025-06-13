@@ -104,7 +104,7 @@ The final deployment step involves hosting the Docker container on an **Amazon E
 
 ## 🎯 Outcome
 
-By combining modular development, containerization, cloud deployment, and automation, this project reflects the core principles of modern DevOps. It demonstrates how CI/CD practices can accelerate development workflows, reduce errors, and ensure continuous delivery of reliable applications.
+By combining modular development, containerization, cloud deployment, and automation, this project reflects the core principles of modern DevOps. It demonstrates how CI/CD practices can accelerate development workflows, reduce errors, and ensure continuous delivery of reliable applications..
 
 ---
 

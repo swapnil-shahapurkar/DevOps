@@ -1,6 +1,6 @@
 # 🚀 Full CI/CD Pipeline with GitHub Actions, Docker & AWS EC2
 
-This project demonstrates the implementation of a fully automated **CI/CD (Continuous Integration and Continuous Delivery)** pipeline using:
+This project demonstrates the implementation of a fully automated **CI/CD (Continuous Integration and Continuous Delivery)** pipeline using:.
 
 - ✅ **GitHub** for version control and collaboration  
 - ⚙️ **GitHub Actions** for automation  
